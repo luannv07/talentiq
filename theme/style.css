@@ -1,0 +1,12 @@
+/*
+Theme Name: TalentIQ Child
+Template: twentytwentyfive
+Description: Child theme tùy biến cho TalentIQ
+Author: luannv07
+Version: 1.0
+*/
+
+:root {
+    --color-primary: #6366f1;
+    --color-secondary: #8b5cf6;
+}
