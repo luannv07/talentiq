@@ -1,0 +1,13 @@
+{
+    "name": "talentiq/smart-recruitment",
+    "description": "Smart Recruitment WordPress Plugin",
+    "require": {
+        "smalot/pdfparser": "^2.12"
+    },
+    "autoload": {
+        "psr-4": {}
+    },
+    "config": {
+        "vendor-dir": "vendor"
+    }
+}
