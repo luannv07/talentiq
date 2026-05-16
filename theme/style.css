@@ -1,12 +1,51 @@
 /*
 Theme Name: TalentIQ Child
 Template: twentytwentyfive
-Description: Child theme tùy biến cho TalentIQ
-Author: luannv07
+Description: Child theme tùy biến cho TalentIQ — lớp presentation, logic nằm trong plugin smart-recruitment
+Author: luannv
 Version: 1.0
 */
 
+/*
+ * CSS component (buttons, cards, forms, job listing) đã được định nghĩa đầy đủ
+ * trong plugin: smart-recruitment/public/assets/public.css
+ * File này chỉ chứa CSS variables thương hiệu TalentIQ và các override nhỏ của theme.
+ */
+
+/* ── CSS Variables thương hiệu TalentIQ ── */
 :root {
-    --color-primary: #6366f1;
-    --color-secondary: #8b5cf6;
+    --tiq-primary:   #6366f1;
+    --tiq-secondary: #8b5cf6;
+    --tiq-accent:    #06b6d4;
+    --tiq-success:   #10b981;
+    --tiq-warning:   #f59e0b;
+    --tiq-danger:    #ef4444;
+    --tiq-text:      #1e293b;
+    --tiq-muted:     #64748b;
+    --tiq-border:    #e2e8f0;
+    --tiq-bg-light:  #f8fafc;
+}
+
+/* ── Override nhỏ cho hero section trong block template ──
+   Lý do: twenty-twenty-five áp dụng max-width mặc định làm hero bị hẹp */
+.tiq-recruitment-page .tiq-hero {
+    max-width: 100%;
+    padding: 60px 24px;
+    text-align: center;
+    background: linear-gradient(135deg, #f0f0ff 0%, #faf5ff 100%);
+}
+
+/* ── Override nhỏ cho badge hero ──
+   Lý do: cần phân biệt rõ với text thường, plugin không định nghĩa badge này */
+.tiq-hero .tiq-badge {
+    display: inline-block;
+    background: var(--tiq-primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
 }

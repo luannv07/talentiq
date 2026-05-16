@@ -1,58 +1,130 @@
-# Thông tin sinh viên
+# TalentIQ — Hệ Thống Tuyển Dụng Thông Minh Tích Hợp AI
 
-- Họ và tên: Nguyễn Văn Luận
-- Mã sinh viên: 23810310279
-- Lớp: D18CNPM4
+> Sinh viên: Nguyễn Văn Luận · MSSV: 23810310279 · Lớp: D18CNPM4
 
-# Smart Recruitment — Plugin Tuyển Dụng Thông Minh
+## Giới thiệu
 
-Plugin WordPress giúp tự động hóa quy trình tuyển dụng bằng phân tích CV/ứng viên bằng AI (Google Gemini), quản lý tin tuyển dụng và hồ sơ ứng viên trực tiếp trong khu vực quản trị WordPress.
+TalentIQ là hệ thống tuyển dụng thông minh xây dựng trên nền WordPress, tích hợp AI (Google Gemini) để tự động phân tích CV ứng viên, quản lý tin tuyển dụng và hồ sơ ứng tuyển. Dự án gồm hai thành phần phối hợp chặt chẽ: **plugin** xử lý toàn bộ logic nghiệp vụ, **child theme** đảm nhận lớp trình bày giao diện.
 
-## Tính năng chính
+## Cấu trúc repo
 
-- Phân tích CV bằng Google Gemini và trả về điểm `score`, điểm mạnh, điểm yếu và khuyến nghị.
-- Lưu trữ hồ sơ ứng viên, trạng thái ứng tuyển, và lịch sử gửi email.
-- Tạo và quản lý tin tuyển dụng (title, description, skills, salary, location, type).
-- Shortcode hiển thị danh sách công việc và form ứng tuyển công khai.
-- Gửi email thông báo (SMTP) khi cập nhật trạng thái `suitable`/`unsuitable`.
+```
+talentiq/
+├── smart-recruitment/          ← WordPress plugin (slug: smart-recruitment)
+│   ├── admin/                  ← Giao diện quản trị (dashboard, jobs, applications)
+│   ├── assets/                 ← Bootstrap 5, Font Awesome
+│   ├── includes/               ← Core classes (Activator, Gemini, Mailer, Uploader)
+│   ├── public/                 ← Frontend assets & views
+│   │   ├── assets/
+│   │   │   ├── public.css      ← Design system, component styles
+│   │   │   └── public.js       ← Form handling, CV upload, autofill
+│   │   └── views/              ← Template partials (job-listing, job-detail, apply-form)
+│   ├── templates/              ← Page templates dùng shortcode
+│   ├── vendor/                 ← Composer dependencies (smalot/pdfparser)
+│   └── smart-recruitment.php   ← Plugin entry point
+├── theme/                      ← Child theme Twenty Twenty-Five
+│   ├── parts/
+│   │   └── recruitment-hero.html   ← Hero section (Gutenberg FSE)
+│   ├── templates/
+│   │   └── recruitment.html        ← Page template tuyển dụng full-width
+│   ├── functions.php           ← Enqueue từ plugin, đăng ký template
+│   └── style.css               ← Theme header + CSS variables thương hiệu
+└── README.md
+```
 
-## Yêu cầu
+## Yêu cầu hệ thống
 
-- PHP 8.x
-- WordPress 6.x
-- Composer (để cài `smalot/pdfparser` đã được vendorized nhưng vẫn khuyến nghị dùng composer khi thay đổi)
+| Thành phần | Phiên bản |
+|---|---|
+| WordPress | 6.x trở lên |
+| PHP | 8.x trở lên |
+| Parent theme | Twenty Twenty-Five |
+| Trình duyệt | Chrome / Firefox / Edge (modern) |
 
 ## Cài đặt
 
-1. Sao chép thư mục `smart-recruitment` vào `wp-content/plugins/`.
-2. (Nếu cần) Chạy `composer install` trong thư mục plugin.
-3. Kích hoạt plugin từ trang Plugins trong WordPress admin.
-4. Vào `Smart Recruitment` trong menu admin để cấu hình API và SMTP.
+### 1. Plugin Smart Recruitment
 
-## Cấu hình
+```bash
+# Sao chép thư mục plugin vào WordPress
+cp -r smart-recruitment/ /path/to/wp-content/plugins/
 
-- `sr_gemini_api_key`: API key cho Google Gemini (lưu trong `get_option`).
-- `sr_gemini_model`: Model Gemini (mặc định `gemini-2.5-flash`).
-- `sr_smtp_host`, `sr_smtp_port`, `sr_smtp_username`, `sr_smtp_password`: cấu hình SMTP cho gửi email.
+# (Tùy chọn) Cài Composer dependencies nếu cần cập nhật
+cd /path/to/wp-content/plugins/smart-recruitment
+composer install
+```
 
-## Sử dụng
+Sau đó vào **WordPress Admin → Plugins → Kích hoạt** plugin **Smart Recruitment**.
 
-- Admin: Truy cập trang `Smart Recruitment` để xem dashboard, quản lý jobs, applications và chạy phân tích AI cho từng CV.
-- Public: Dùng shortcode `[sr_job_listing]` để hiển thị danh sách tuyển dụng công khai; form nộp hồ sơ có AJAX gửi tới plugin.
+Cấu hình tại **Smart Recruitment → Cài đặt**:
+- `sr_gemini_api_key` — API key Google Gemini
+- `sr_gemini_model` — Model AI (mặc định `gemini-2.5-flash`)
+- `sr_smtp_*` — Thông số SMTP để gửi email thông báo
 
-## Bảng dữ liệu (prefix = `{$wpdb->prefix}`)
+### 2. Child Theme TalentIQ
 
-- `sr_jobs` — Danh sách công việc
-- `sr_applications` — Hồ sơ ứng viên
-- `sr_ai_results` — Kết quả phân tích AI
+```bash
+# Sao chép thư mục theme vào WordPress
+cp -r theme/ /path/to/wp-content/themes/twentytwentyfive-child/
+```
+
+Vào **WordPress Admin → Giao diện → Themes → Kích hoạt** theme **TalentIQ Child**.
+
+> **Lưu ý:** Plugin phải được kích hoạt trước khi kích hoạt theme. Nếu không, một admin notice sẽ nhắc nhở.
+
+## Mối quan hệ Plugin ↔ Theme
+
+| Vai trò | Plugin `smart-recruitment` | Theme `twentytwentyfive-child` |
+|---|---|---|
+| Logic nghiệp vụ | Toàn bộ (CRUD jobs, AI, email, AJAX) | Không |
+| CSS / JS | Định nghĩa design system (`public/assets/`) | Chỉ enqueue lại, không viết mới |
+| Render frontend | Cung cấp shortcode | Override giao diện qua block template |
+| Shortcode | `[sr_job_listing]` | Nhúng trong `templates/recruitment.html` |
+
+**Nguyên tắc chính:**
+- Theme là lớp **presentation** thuần túy — không chứa logic.
+- Theme **không tự viết lại** CSS/JS đã có trong plugin, chỉ enqueue lại với dependency rõ ràng.
+- Plugin cung cấp shortcode `[sr_job_listing]`; theme quyết định **nơi và cách** hiển thị.
+
+## Shortcodes
+
+| Shortcode | Mô tả |
+|---|---|
+| `[sr_job_listing]` | Hiển thị danh sách tin tuyển dụng công khai kèm form nộp hồ sơ |
+
+**Ví dụ sử dụng trong trang WordPress:**
+```
+[sr_job_listing]
+```
+
+Hoặc thông qua **Trang tuyển dụng TalentIQ** — page template có sẵn trong theme.
+
+## Tính năng chính
+
+- **Đăng tin tuyển dụng (JD)** — Tạo/sửa/xóa job với đầy đủ thông tin (title, mô tả, kỹ năng, lương, địa điểm, loại hình). Hỗ trợ sinh mô tả tự động bằng AI.
+- **Phân tích CV bằng AI** — Upload CV (PDF), hệ thống trích xuất nội dung và gửi cho Google Gemini để chấm điểm (`score`), phân tích điểm mạnh/yếu và đưa ra khuyến nghị.
+- **Quản lý ứng viên** — Xem danh sách ứng viên theo từng job, cập nhật trạng thái (`suitable` / `unsuitable`), gửi email thông báo tự động.
+- **Dashboard admin** — Thống kê tổng quan: số job, số đơn, điểm AI cao nhất.
+
+## Cơ sở dữ liệu
+
+Các bảng được tạo tự động khi kích hoạt plugin (prefix theo `$wpdb->prefix`):
+
+| Bảng | Nội dung |
+|---|---|
+| `sr_jobs` | Danh sách tin tuyển dụng |
+| `sr_applications` | Hồ sơ ứng viên |
+| `sr_ai_results` | Kết quả phân tích AI |
 
 ## AJAX Actions
 
-Tất cả yêu cầu AJAX admin cần nonce `sr_nonce`.
+Tất cả request admin yêu cầu nonce `sr_nonce`.
 
-- `sr_analyze_cv` — Phân tích CV (Admin)
-- `sr_update_status` — Cập nhật trạng thái ứng viên (Admin)
-- `sr_toggle_job_status` — Bật/tắt tin tuyển dụng (Admin)
-- `sr_generate_jd` — Sinh mô tả công việc bằng AI (Admin)
-- `sr_submit_application` — Nộp hồ sơ (Public)
-- `sr_extract_cv` — Trích xuất CV để autofill (Public)
+| Action | Phạm vi | Mô tả |
+|---|---|---|
+| `sr_analyze_cv` | Admin | Phân tích CV bằng Gemini |
+| `sr_update_status` | Admin | Cập nhật trạng thái ứng viên |
+| `sr_toggle_job_status` | Admin | Bật/tắt tin tuyển dụng |
+| `sr_generate_jd` | Admin | Sinh mô tả JD bằng AI |
+| `sr_submit_application` | Public | Nộp hồ sơ ứng tuyển |
+| `sr_extract_cv` | Public | Trích xuất CV để autofill form |
